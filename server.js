@@ -16,10 +16,21 @@ app.set('view engine', 'hbs');
 
 // Homepage route
 app.get('/', function (req, res) {
-	res.send('hello world');
+	res.render('index');
 });
 
+// API Routes
 
+
+// test data
+var allPosts  = [
+    	{ post: 'Post #1', description: 'description' },
+    	{ post: 'Post #2', description: 'description' }
+    ];
+
+app.get('/api/posts', function(req, res) {
+	res.json({ posts: allPosts });
+});
 
 
 // starts server on localhost
