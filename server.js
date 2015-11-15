@@ -1,8 +1,9 @@
 //server.js
 //SERVER SIDE JAVASCRIPT
 var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+	app = express();
+	bodyParser = require('body-parser');
+	mongoose = require('mongoose');
 
 // configure body-parser (for form data)
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,6 +13,12 @@ app.use(express.static(__dirname + '/public'));
 
 // express will use hbs in views directory
 app.set('view engine', 'hbs');
+
+//connect to mongodb
+mongoose.connect('mongodb://localhost/microblog-app');
+
+// require Post model
+var Post = require('./models/post');
 
 
 // Homepage route
@@ -23,13 +30,15 @@ app.get('/', function (req, res) {
 
 
 // test data
-var allPosts  = [
-    	{ post: 'Post #1', description: 'description' },
-    	{ post: 'Post #2', description: 'description' }
-    ];
+// var allPosts  = [
+//     	{ post: 'Post #1', description: 'description' },
+//     	{ post: 'Post #2', description: 'description' }
+//     ];
 
-app.get('/api/posts', function(req, res) {
-	res.json({ posts: allPosts });
+app.get('/api/posts', function (req, res) {
+	Post.find(function (err, allPosts) {
+		res.json({ posts: allPosts });
+	});
 });
 
 
