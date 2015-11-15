@@ -8,11 +8,15 @@ $(document).ready(function() {
     var allPosts  = [
     	{ post: 'Post #1', description: 'description' },
     	{ post: 'Post #2', description: 'description' }
-
     ];
 
-    var postsHtml = template({ posts: allPosts });
-    $('#posts-list').append(postsHtml);
+    // AJAX call to GET all posts
+    $.get('/api/posts', function(data) {
+    	allPosts = data.posts;
+    	var postsHtml = template({ posts: allPosts });
+    	$('#posts-list').append(postsHtml);
+    });
 
+    
 });
 
