@@ -1,17 +1,18 @@
-// wait for DOM to load before running JS
 $(document).ready(function() {
 
-// check to make sure JS is loaded
-    console.log('JS is loaded!');
-
-    var source = $("#-name---template").html();
+	// compile handlebars template
+    var source = $("#blogs-template").html();
     var template = Handlebars.compile(source);
 
-    var blogCollection  = [];
+    // array of test data
+    var allPosts  = [
+    	{ post: 'Post #1', description: 'description' },
+    	{ post: 'Post #2', description: 'description' }
 
+    ];
 
-
-
+    var postsHtml = template({ posts: allPosts });
+    $('#posts-list').append(postsHtml);
 
 });
 
