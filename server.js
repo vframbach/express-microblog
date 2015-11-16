@@ -30,69 +30,65 @@ app.get('/', function (req, res) {
 
 
 app.get('/api/posts', function (req, res) {
+	// find all posts in db
 	Post.find(function (err, allPosts) {
 		res.json({ posts: allPosts });
 	});
 });
 
-// get one post
+// get one blog post
 app.get('/api/posts/:id', function (req, res) {
 	// get post ID from url params and save to variable
 	var postId = parseInt(req.params.id);
 	//find post we want to read
-	var foundPost = posts.filter(function(post) {
-		return post._id == postId;
-	})[0];
-
-	// send foundPost as JSON response
-	res.json(foundPost);
+	
+	//find post in db by ID
+	Post.findOne({ _id: postId }, function (err, foundPost) {
+		res.json(foundPost);
+	});
 });
 
 
-// create new post
+// create new blog post
 app.post('/api/posts', function (req, res) {
-	var newPost = req.body;
+	var newPost = new Post(req.body);
 
-	if (posts.length > 0) {
-		newPost._id = posts[posts.length - 1]._id + 1;
-	} else {
-		newPost._id = 1;
-	}
-
-	posts.push(newPost);
-
-	res.json(newPost);
+	// save new blog post in db
+	newPost.save(function (err, savedPost) {
+		res.json(savedPost);
+	});
 });
 
-// update post
+// update blog post
 
 app.put('/api/posts/:id', function(req, res) {
-	// get post ID from url params and save to variable
-	var postId = parseInt(req.params.id);
-	// use ID to find post to update
-	var postToUpdate = posts.filter(function (post) {
-		return post._id == postId;
-	})[0];
+	// get blog post ID from url params and save to variable
+	var postId = req.params.id;
+	console.log(postId);
+	// find blog post in db by ID
+	Post.findOne({ _id: postId }, function(err, foundPost) {
+		// update the blog post's attributes
+		console.log(foundPost, err);
+		foundPost.post = req.body.post;
+		foundPost.description = req.body.description;
 
-	postToUpdate.post = req.body.post;
-	postToUpdate.description = req.body.description;
-	// respond with updated post
-	res.json(postToUpdate);
+		// save updated blog post in db
+		foundPost.save(function (err, savedPost) {
+			res.json(savedPost);
+		});
+	});
 });
 
-// delete post
-app.delete('/api/posts/:id', function(req, res) {
-	// get post ID from url params and save to variable
-	var postId = parseInd(req.params.id);
-	//use ID to find post to delete
-	var postToDelete = posts.filter(function(post) {
-		return post._id ==postId;
-	})[0];
-	//remove post from database
-	posts.splice(posts.indexOf(postToDelete), 1);
 
-	//respond with deleted post
-	res.json(postToDelete);
+// delete blog post
+app.delete('/api/posts/:id', function(req, res) {
+	// get blog post ID from url params and save to variable
+	var postId = parseInt(req.params.id);
+	
+	// find blog post in db by ID and remove
+	Post.findOneAndRemove({ _id: postId }, function(err, deletedPost) {
+		res.json(deletedPost);
+	});
 });
 
 // starts server on localhost
