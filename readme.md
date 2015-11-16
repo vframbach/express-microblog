@@ -2,6 +2,8 @@
 
 **Objective:** Use Node, Express, and MongoDB to build a full-stack microblog application.
 
+![screenshot](screenshot.png)
+
 ## Minimum Requirements
 
 * A server with RESTful API routes for blog posts. Your API should have the following five routes:
