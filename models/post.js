@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 
 var PostSchema = new Schema( {
 	post: String,
-	description: String
+	description: String,
+	image: String
 });
 
 var Post = mongoose.model('Post', PostSchema);

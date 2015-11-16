@@ -39,8 +39,7 @@ app.get('/api/posts', function (req, res) {
 // get one blog post
 app.get('/api/posts/:id', function (req, res) {
 	// get post ID from url params and save to variable
-	var postId = parseInt(req.params.id);
-	//find post we want to read
+	var postId = (req.params.id);
 	
 	//find post in db by ID
 	Post.findOne({ _id: postId }, function (err, foundPost) {
@@ -71,6 +70,7 @@ app.put('/api/posts/:id', function(req, res) {
 		console.log(foundPost, err);
 		foundPost.post = req.body.post;
 		foundPost.description = req.body.description;
+		foundPost.image = req.body.image;
 
 		// save updated blog post in db
 		foundPost.save(function (err, savedPost) {

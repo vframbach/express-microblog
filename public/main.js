@@ -19,7 +19,7 @@ $(document).ready(function() {
 
 	refreshList();
 
-	// When the modal is opened, check if it was opened by a edit button.
+	// When the modal is opened, check if it was opened by an edit button.
 	// If it's opened by an edit button, then fill in post data
     $('#myModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
@@ -41,41 +41,66 @@ $(document).ready(function() {
 
     // after fields are filled in, clicking button saves text to db
     $('.save-text-button').on('click', function() {
-    	console.log('saving!');
+        console.log('saving!');
 
-    	var newPostTitle = $('#new-post-title').val();
-    	var newPostText = $('#new-post-text').val();
-    	var postId = $('#new-post-id').val();
+        var newPostTitle = $('#new-post-title').val();
+        var newPostText = $('#new-post-text').val();
+        var postId = $('#new-post-id').val();
+        var newPostImage;
 
-    	console.log(newPostTitle, newPostText);
+        console.log(newPostTitle, newPostText);
+        // title of post gets added to page as gif
 
-    	// if there's no post id, create one and post text to page
-    	if (!postId) {
-	    	$.ajax({
-				type: 'POST',
-				url: '/api/posts',
-				data: { post: newPostTitle, description: newPostText},
-				success: function(data) {
-					console.log('success!');
-					$('#myModal').modal('hide');
-					refreshList();
-				}
-			});
+        $.get('http://api.giphy.com/v1/gifs/random', {
+            tag: newPostTitle,
+            rating: 'pg',
+            api_key: 'dc6zaTOxFJmzC' // your request
+        }).done(function(res) {
+            console.log(res);
+            // giphy responded ok
+            newPostImage = res.data.image_url;
+            // set gif on post here
+        }).always(function(response) {
+            // always runs after request is complete, or failed
+            // save the post here
+            console.log('gify is complete!');
 
-		// if there was a post id, edit/replace text on page	
-		} else {
+            // if there's no post id, create one and post text to page
+            if (!postId) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/posts',
+                    data: {
+                        post: newPostTitle,
+                        description: newPostText,
+                        image: newPostImage
+                    },
+                    success: function(data) {
+                        console.log('success!');
+                        $('#myModal').modal('hide');
+                        refreshList();
+                    }
+                });
 
-	        $.ajax({
-	            type: 'PUT',
-	            url: '/api/posts/' + postId,
-	            data: { post: newPostTitle, description: newPostText},
-	            success: function(data) {
-	                console.log('post has been edited!');
-	                $('#myModal').modal('hide');
-	                refreshList();
-	            }
-	        });
-    	}
+                // if there was a post id, edit/replace text on page	
+            } else {
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/posts/' + postId,
+                    data: {
+                        post: newPostTitle,
+                        description: newPostText,
+                        image: newPostImage
+                    },
+                    success: function(data) {
+                        console.log('post has been edited!');
+                        $('#myModal').modal('hide');
+                        refreshList();
+                    }
+                });
+            }
+        });
     });
 
     // delete blog posts
