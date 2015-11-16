@@ -13,26 +13,25 @@
 	<body>
 		<div class="container">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="jumbotron col-md-6">
 					<h1 class="text-center">Micro Blog</h1>
 					<!-- Button trigger modal -->
 					<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
 					Create new Post
 					</button>
-					<div id="posts-list">
-						<script id="blogs-template" type="text/x-handlebars-template">
-							\{{#each posts}}
-								<div class="col-xs-5 well">
-									<h2>\{{post}}</h2>
-									<div>\{{description}}</div>
-									<button type="button" class="btn btn-default btn-xs edit" data-post-id="\{{_id}}" data-toggle="modal" data-target="#myModal" data-placement="bottom" title="Edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-									</button>
-									<button type="button" class="btn btn-default btn-xs delete" data-post-id="\{{_id}}" data-placement="bottom" title="Delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-								</div>
-							\{{/each}}
-						</script>
-					</div>
 				</div>
+				<div class="container" id="posts-list"></div>
+				<script id="blogs-template" type="text/x-handlebars-template">
+					\{{#each posts}}
+						<div class="col-md-6 well">
+							<h2>\{{post}}</h2>
+							<div>\{{description}}</div>
+							<button type="button" class="btn btn-default btn-xs edit" data-post-id="\{{_id}}" data-toggle="modal" data-target="#myModal" data-placement="bottom" title="Edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</button>
+							<button type="button" class="btn btn-default btn-xs delete" data-post-id="\{{_id}}" data-placement="bottom" title="Delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+						</div>
+					\{{/each}}
+				</script>
 			</div>
 		</div>
 

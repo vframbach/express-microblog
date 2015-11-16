@@ -83,7 +83,7 @@ app.put('/api/posts/:id', function(req, res) {
 // delete blog post
 app.delete('/api/posts/:id', function(req, res) {
 	// get blog post ID from url params and save to variable
-	var postId = parseInt(req.params.id);
+	var postId = (req.params.id);
 	
 	// find blog post in db by ID and remove
 	Post.findOneAndRemove({ _id: postId }, function(err, deletedPost) {
