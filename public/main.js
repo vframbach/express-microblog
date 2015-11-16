@@ -25,14 +25,16 @@ $(document).ready(function() {
         var button = $(event.relatedTarget); // Button that triggered the modal
         var postId = button.data('post-id'); // Extract info from data-* attributes
         
+        $('#new-post-id').val(postId);
         // if modal wasn't opened by edit button, no post to edit/pre-fill
         if (!postId) {
+        	$('#new-post-title').val("");
+        	$('#new-post-text').val("");
         	return;
         }
         var post = postsCollection.find(function(post) {
             return post._id == postId;
         });
-        var modal = $(this);
         $('#new-post-title').val(post.post);
         $('#new-post-text').val(post.description);
     });
@@ -43,40 +45,37 @@ $(document).ready(function() {
 
     	var newPostTitle = $('#new-post-title').val();
     	var newPostText = $('#new-post-text').val();
+    	var postId = $('#new-post-id').val();
+
     	console.log(newPostTitle, newPostText);
 
-    	$.ajax({
-			type: 'POST',
-			url: '/api/posts',
-			data: { post: newPostTitle, description: newPostText},
-			success: function(data) {
-				console.log('success!');
-				$('#myModal').modal('hide');
-				refreshList();
-			}
-		});
+    	// if there's no post id, create one and post text to page
+    	if (!postId) {
+	    	$.ajax({
+				type: 'POST',
+				url: '/api/posts',
+				data: { post: newPostTitle, description: newPostText},
+				success: function(data) {
+					console.log('success!');
+					$('#myModal').modal('hide');
+					refreshList();
+				}
+			});
 
-    });
+		// if there was a post id, edit/replace text on page	
+		} else {
 
-       // create form that allows edit blog post
-    $('#posts-list').on('click', '.edit', function() {
-        var postId = $(this).data('post-id');
-        console.log(postId);
-        var post = postsCollection.find(function(post) {
-            return post._id == postId;
-        });
-        console.log(post);
-        
-        $.ajax({
-            type: 'PUT',
-            url: '/api/posts/' + postId,
-            data: post,
-            success: function(data) {
-                console.log('post has been edited!');
-                refreshList();
-            }
-        });
-        //console.log(postId);
+	        $.ajax({
+	            type: 'PUT',
+	            url: '/api/posts/' + postId,
+	            data: { post: newPostTitle, description: newPostText},
+	            success: function(data) {
+	                console.log('post has been edited!');
+	                $('#myModal').modal('hide');
+	                refreshList();
+	            }
+	        });
+    	}
     });
 
     // delete blog posts
