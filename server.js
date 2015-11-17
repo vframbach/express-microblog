@@ -1,9 +1,15 @@
 //server.js
 //SERVER SIDE JAVASCRIPT
-var express = require('express');
-	app = express();
-	bodyParser = require('body-parser');
-	mongoose = require('mongoose');
+var express = require('express'),
+	app = express(),
+	bodyParser = require('body-parser'),
+	mongoose = require('mongoose'),
+
+	// auth
+	cookieParser = require('cookie-parser'),
+	session = require('express-session'),
+	passport = require('passport'),
+	LocalStrategy = require('passport-local').Strategy;
 
 // configure body-parser (for form data)
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,11 +26,33 @@ mongoose.connect('mongodb://localhost/microblog-app');
 // require Post model
 var Post = require('./models/post');
 
+// require User model
+var Post = require('./models/post'),
+	User = require('./models/user');
+
 
 // Homepage route
 app.get('/', function (req, res) {
 	res.render('index');
 });
+
+// tells express to use auth middleware
+app.use(cookieParser());
+app.use(session({
+	secret: 'supersecretkey',
+	resave: false,
+	saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// passport config, allow users to sign up, log in and out
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 
 // API Routes
 
@@ -139,6 +167,38 @@ app.delete('/api/posts/:postId/comments/:commentId', function(req, res) {
 		});
 	});	
 });
+
+// AUTH ROUTES
+
+// show signup view 
+app.get('/signup', function(req, res) {
+	res.render('signup');
+});
+
+// show login view
+app.get('/login', function (req, res) {
+	res.render('login');
+});
+
+
+// sign up new user, then log them in
+// hashes and salts password, saves new user to db
+app.post('/signup', function (req, res) {
+	User.register(new User({ username: req.body.username }), req.body.password, 
+		function  (err, newUser) {
+			passport.authenticate('local')(req, res, function() {
+				res.send('signed up!!!');
+			});
+		}
+	);
+});
+
+
+// log in user, runs when user submits form
+app.post('/login', passport.authenticate('local'), function (req, res) {
+	res.send('logged in!!!');
+});
+
 
 // starts server on localhost
 app.listen(process.env.PORT || 3000, function() {
