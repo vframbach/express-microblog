@@ -30,8 +30,11 @@ app.get('/', function (req, res) {
 
 
 app.get('/api/posts', function (req, res) {
-	// find all posts in db
-	Post.find(function (err, allPosts) {
+	// find all posts (with comments) in db
+	Post
+	.find()
+	.populate('comments')
+	.exec(function (err, allPosts) {
 		res.json({ posts: allPosts });
 	});
 });
@@ -41,8 +44,11 @@ app.get('/api/posts/:id', function (req, res) {
 	// get post ID from url params and save to variable
 	var postId = (req.params.id);
 	
-	//find post in db by ID
-	Post.findOne({ _id: postId }, function (err, foundPost) {
+	//find one post (with comment) in db by ID
+	Post
+	.findOne({ _id: postId })
+	.populate('comments')
+	.exec(function (err, foundPost) {
 		res.json(foundPost);
 	});
 });
@@ -63,11 +69,11 @@ app.post('/api/posts', function (req, res) {
 app.put('/api/posts/:id', function(req, res) {
 	// get blog post ID from url params and save to variable
 	var postId = req.params.id;
-	console.log(postId);
+	
 	// find blog post in db by ID
 	Post.findOne({ _id: postId }, function(err, foundPost) {
 		// update the blog post's attributes
-		console.log(foundPost, err);
+		
 		foundPost.post = req.body.post;
 		foundPost.description = req.body.description;
 		foundPost.image = req.body.image;
@@ -89,6 +95,49 @@ app.delete('/api/posts/:id', function(req, res) {
 	Post.findOneAndRemove({ _id: postId }, function(err, deletedPost) {
 		res.json(deletedPost);
 	});
+});
+
+// add comments to blog post
+app.post('/api/posts/:postId/comments', function(req, res) {
+	// get blog post ID from url params and save to variable
+	var postId = req.params.postId;
+	
+	// find blog post in db by ID
+	Post.findOne({ _id: postId }, function(err, foundPost) {
+		// create new comment
+		var newComment = new Comment(req.body);
+
+		// save new comment in db
+		newComment.save(function (err, savedComment) {
+
+			// add comment to post (update blog post)
+			foundPost.comments.push(savedComment);
+
+			//save post
+			foundPost.save(function (err, savedPost) {
+				res.json(savedPost);
+			});
+		});
+	});	
+});
+
+// delete comments from blog post
+app.delete('/api/posts/:postId/comments/:commentId', function(req, res) {
+	// get blog post and comment ID from url params and save to variable
+	var postId = req.params.postId;
+	var commentId = req.params.commentId;
+
+	// find blog post in db by ID
+	Post.findOne({ _id: postId }, function(err, foundPost) {
+		var commentIndex = foundPost.comments.indexOf(commentId);
+		// remove comment from post
+		foundPost.comments.splice(commentIndex, 1);
+
+		//save post
+		foundPost.save(function (err, savedPost) {
+			res.json(savedPost);
+		});
+	});	
 });
 
 // starts server on localhost

@@ -23,7 +23,7 @@ $(document).ready(function() {
 	// If it's opened by an edit button, then fill in post data
     $('#myModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
-        var postId = button.data('post-id'); // Extract info from data-* attributes
+        var postId = button.closest('.post').data('post-id'); // Extract info from data-* attributes
         
         $('#new-post-id').val(postId);
         // if modal wasn't opened by edit button, no post to edit/pre-fill
@@ -48,7 +48,6 @@ $(document).ready(function() {
         var postId = $('#new-post-id').val();
         var newPostImage;
 
-        console.log(newPostTitle, newPostText);
         // title of post gets added to page as gif
 
         $.get('http://api.giphy.com/v1/gifs/random', {
@@ -56,7 +55,7 @@ $(document).ready(function() {
             rating: 'pg',
             api_key: 'dc6zaTOxFJmzC' // your request
         }).done(function(res) {
-            console.log(res);
+            
             // giphy responded ok
             newPostImage = res.data.image_url;
             // set gif on post here
@@ -105,7 +104,7 @@ $(document).ready(function() {
 
     // delete blog posts
      $('#posts-list').on('click', '.delete', function() {
-        var postId = $(this).data('post-id');
+        var postId = $(this).closest('.post').data('post-id');
         $.ajax({
             type: 'DELETE',
             url: '/api/posts/' + postId,
@@ -115,5 +114,44 @@ $(document).ready(function() {
             }
         });
         console.log(postId);
+    });
+
+    // click handler for show/hide comment button
+    $('#posts-list').on('click', '.toggle-comments', function() {
+    	$(this).find('.toggle-text').text(function(i,old){
+        	return old=='Show' ?  'Hide' : 'Show';
+    	});
+    });
+
+    // add comment to post
+    $('#posts-list').on('submit', '.new-comment-form', function(e) {
+    	e.preventDefault();
+        var postId = $(this).closest('.post').data('post-id');
+        
+        $.ajax({
+            type: 'POST',
+            data: $(this).serialize(),
+            url: '/api/posts/' + postId + '/comments',
+            success: function(data) {
+                console.log('comment has been added to post!');
+                refreshList();
+            }
+        });
+        
+    });
+
+    // delete comment
+     $('#posts-list').on('click', '.delete-comment', function() {
+     	var postId = $(this).closest('.post').data('post-id');
+        var commentId = $(this).data('comment-id');
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/posts/' + postId + '/comments/' + commentId,
+            success: function(data) {
+                console.log('comment has been deleted!');
+                refreshList();
+            }
+        });
+        
     });
 });
