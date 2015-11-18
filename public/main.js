@@ -154,4 +154,17 @@ $(document).ready(function() {
         });
         
     });
+     // tooltip for login
+    $('.login-button').popover({
+        html: true,
+        content: $('#login-form'),
+        placement: "bottom"
+    });
+
+    // tooltip for signup
+    $('.signup-button').popover({
+        html: true,
+        content: $('#signup-form'),
+        placement: "bottom"
+    });
 });

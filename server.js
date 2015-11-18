@@ -31,11 +31,6 @@ var Post = require('./models/post'),
 	User = require('./models/user');
 
 
-// Homepage route
-app.get('/', function (req, res) {
-	res.render('index');
-});
-
 // tells express to use auth middleware
 app.use(cookieParser());
 app.use(session({
@@ -188,17 +183,22 @@ app.post('/signup', function (req, res) {
 		function  (err, newUser) {
 			passport.authenticate('local')(req, res, function() {
 				// res.send('signed up!!!');
-				res.redirect('/profile');
+				res.redirect('/');
 			});
 		}
 	);
 });
 
 
+// Homepage route
+app.get('/', function (req, res) {
+	res.render('index', { user: req.user });
+});
+
 // log in user, runs when user submits form
 app.post('/login', passport.authenticate('local'), function (req, res) {
 	// res.send('logged in!!!');
-	res.redirect('/profile');
+	res.redirect('/');
 });
 
 // log out user
