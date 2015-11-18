@@ -16,7 +16,7 @@
 				<!-- Brand and toggle get grouped for better mobile display -->
 				<div class="navbar-header">
 					{{#if user}}
-					<a class="navbar-brand" href="#">Hello {{user.username}}</a>
+					<span class="navbar-brand">Hello {{user.username}}</span>
 					{{/if}}
 				</div>
 				<!-- Collect the nav links, forms, and other content for toggling -->
@@ -25,7 +25,7 @@
 					</ul>
 					<form class="navbar-form navbar-right" role="search">
 						{{#if user}}
-						<button type="button" class="btn btn-default">Profile</button>
+						<a href="/profile" class="btn btn-default">Profile</a>
 						<a href="/logout" class="btn btn-default">Log out</a>
 						{{else}}
 						<button type="button" class="btn btn-default login-button">Log in</button>
