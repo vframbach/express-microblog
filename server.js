@@ -63,9 +63,8 @@ passport.deserializeUser(function (obj, done) {
 });
 
 passport.use(new GitHubStrategy({
-	clientID: oauth.github.clientSecret,
-	clientSecret: oauth.github.clientSecret,
-	callbackURL: oauth.github.callbackURL
+	clientID: oauth.github.clientID,
+	clientSecret: oauth.github.clientSecret
 }, function (accessToken, refreshToken, profile, done) {
 	process.nextTick(function() {
 		return done(null, profile);
@@ -242,7 +241,14 @@ app.get('/auth/github', passport.authenticate('github'), function (req, res) {
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }),
   function (req, res) {
     console.log(req.user);
-    res.redirect('/profile');
+
+	var newUser = new User(req.user);
+	newUser.save(newUser,
+		function  (err, newUser) {
+			res.redirect('/profile');
+		}
+	);
+    
   }
 );
 

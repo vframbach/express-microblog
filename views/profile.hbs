@@ -1,40 +1,5 @@
-<!DOCTYPE html>
-<!-- profile.hbs -->
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<!-- bootstrap css -->
-	<link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<!-- custom styles -->
-	<link rel="stylesheet" type="text/css" href="profile.css">
-	<title>Profile</title>
-</head>
-<body>
-	<nav class="navbar navbar-default navbar-fixed-top">
-		<div class="container-fluid">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<a class="navbar-brand" href="/">Critter Home</a>	
-			</div>
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-				</ul>
-				<form class="navbar-form navbar-right" role="search">
-					{{#if user}}
-					<a href="/profile" class="btn btn-default">Profile</a>
-					<a href="/logout" class="btn btn-default">Log out</a>
-					{{else}}
-					<button type="button" class="btn btn-default login-button">Log in</button>
-					<button type="button" class="btn btn-default signup-button">Sign up</button>
-					{{/if}}
-					
-				</form>
-				<ul class="nav navbar-nav navbar-left">
-				</ul>
-			</div><!-- /.navbar-collapse -->
-		</div><!-- /.container-fluid -->
-	</nav>
+{{> header}}
+
 	{{#if user}}
 	<h2>Welcome, {{user.username}}!</h2>
 		<p>Pick your spirit animal</p>
@@ -48,6 +13,9 @@
 		<!-- bootstrap js -->
 		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<!-- handlebars -->
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js">
+		</script>
+		<!-- custom script -->
+		<script type="text/javascript" src="main.js"></script>
 </body>
 </html>
