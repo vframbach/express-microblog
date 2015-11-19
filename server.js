@@ -3,13 +3,19 @@
 var express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
+	hbs = require('hbs'),
 	mongoose = require('mongoose'),
 
 	// auth
 	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	passport = require('passport'),
-	LocalStrategy = require('passport-local').Strategy;
+	LocalStrategy = require('passport-local').Strategy,
+
+	GitHubStrategy = require('passport-github').Strategy,
+	oauth = require('./oauth.js');
+
+
 
 // configure body-parser (for form data)
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,6 +25,7 @@ app.use(express.static(__dirname + '/public'));
 
 // express will use hbs in views directory
 app.set('view engine', 'hbs');
+hbs.registerPartials(__dirname + '/views/partials');
 
 //connect to mongodb
 mongoose.connect('mongodb://localhost/microblog-app');
@@ -44,9 +51,26 @@ app.use(passport.session());
 
 // passport config, allow users to sign up, log in and out
 passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
+// serialize and deserialize
+passport.serializeUser(function (user, done) {
+	done(null, user);
+});
+passport.deserializeUser(function (obj, done) {
+	done(null, obj);
+});
+
+passport.use(new GitHubStrategy({
+	clientID: oauth.github.clientSecret,
+	clientSecret: oauth.github.clientSecret,
+	callbackURL: oauth.github.callbackURL
+}, function (accessToken, refreshToken, profile, done) {
+	process.nextTick(function() {
+		return done(null, profile);
+	});
+}));
 
 
 // API Routes
@@ -78,13 +102,27 @@ app.get('/api/posts/:id', function (req, res) {
 
 
 // create new blog post
-app.post('/api/posts', function (req, res) {
-	var newPost = new Post(req.body);
+app.post('/api/posts', function(req, res) {
+    if (req.user) {
+        var newPost = new Post(req.body);
 
-	// save new blog post in db
-	newPost.save(function (err, savedPost) {
-		res.json(savedPost);
-	});
+        // save new blog post in db
+        newPost.save(function(err, savedPost) {
+            if (err) {
+                res.status(500).json({
+                    error: err.message
+                });
+            } else {
+                req.user.posts.push(savedPost);
+                req.user.save();
+                res.json(savedPost);
+            }
+        });
+    } else {
+        res.status(401).json({
+            error: 'Unauthorized'
+        });
+    }
 });
 
 // update blog post
@@ -179,6 +217,13 @@ app.get('/login', function (req, res) {
 // sign up new user, then log them in
 // hashes and salts password, saves new user to db
 app.post('/signup', function (req, res) {
+
+	// if user is logged in, don't let them sign up again
+	if (req.user) {
+		res.redirect('/profile');
+	} else {
+
+	}
 	User.register(new User({ username: req.body.username }), req.body.password, 
 		function  (err, newUser) {
 			passport.authenticate('local')(req, res, function() {
@@ -188,6 +233,18 @@ app.post('/signup', function (req, res) {
 		}
 	);
 });
+
+app.get('/auth/github', passport.authenticate('github'), function (req, res) {
+  // the request will be redirected to github for authentication,
+  // so this function will not be called
+});
+
+app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }),
+  function (req, res) {
+    console.log(req.user);
+    res.redirect('/profile');
+  }
+);
 
 
 // Homepage route

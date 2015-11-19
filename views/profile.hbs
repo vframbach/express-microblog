@@ -35,9 +35,14 @@
 			</div><!-- /.navbar-collapse -->
 		</div><!-- /.container-fluid -->
 	</nav>
+	{{#if user}}
 	<h2>Welcome, {{user.username}}!</h2>
 		<p>Pick your spirit animal</p>
-
+		<hr>
+		{{#each user.posts}}
+			<p><strong>{{post}}</strong>{{description}}</p>
+		{{/each}}
+	{{/if}}
 		<!-- jquery -->
 		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<!-- bootstrap js -->

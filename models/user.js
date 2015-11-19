@@ -6,11 +6,17 @@ var mongoose = require('mongoose'),
 
 var UserSchema = new Schema({
 	username: String,
-	password: String
+	password: String,
+	posts: [{
+	type: Schema.Types.ObjectId,
+	ref: 'Post'
+	}]
 });
 
-// passportLocalMongoose hashes and salts plain text password, compares to db
-UserSchema.plugin(passportLocalMongoose);
+
+UserSchema.plugin(passportLocalMongoose, {
+	populateFields: 'posts'
+});
 
 // create User model and export it
 var User = mongoose.model('User', UserSchema);
