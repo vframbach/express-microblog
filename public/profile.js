@@ -8,8 +8,8 @@ $(document).ready(function() {
         function refreshList() {
 
             // AJAX call to GET all posts
-            $.get('/api/posts', function(data) {
-                postsCollection = data.posts;
+            $.get('/api/profile', function(data) {
+                postsCollection = data.user.posts;
                 var postsHtml = template({
                     posts: postsCollection
                 });

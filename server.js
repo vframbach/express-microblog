@@ -85,6 +85,16 @@ app.get('/api/posts', function (req, res) {
 	});
 });
 
+app.get('/api/profile', function (req, res) {
+	// find all posts by user
+	User.findOne({username: req.user.username})
+	.populate('posts')
+	.exec(function(err, foundUser) {
+		console.log(err, foundUser);
+		res.json({ user: foundUser });
+	});
+});
+
 // get one blog post
 app.get('/api/posts/:id', function (req, res) {
 	// get post ID from url params and save to variable
@@ -272,7 +282,16 @@ app.get('/logout', function (req, res) {
 
 // show user profile page
 app.get('/profile', function (req, res) {
-	res.render('profile', { user: req.user });
+	if (!req.user) {
+		return res.redirect('/');
+	}
+	console.log(req.user.username);
+	User.findOne({username: req.user.username})
+	.populate('posts')
+	.exec(function(err, foundUser) {
+		console.log(err, foundUser);
+		res.render('profile', { user: foundUser });
+	});
 });
 
 

@@ -11,47 +11,6 @@
 			</div>
 		</div>
 		<div class="container" id="posts-list"></div>
-		<script id="blogs-template" type="text/x-handlebars-template">
-			\{{#each posts}}
-				<div class="col-md-4 post" data-post-id="\{{_id}}"><div class="well">
-					<h2>\{{post}}</h2>
-					<button type="button" class="btn btn-default btn-xs delete pull-right" data-placement="bottom" title="Delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-
-					<button type="button" class="btn btn-default btn-xs edit pull-right" data-toggle="modal" data-target="#myModal" data-placement="bottom" title="Edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-					</button>
-					
-					<div>\{{description}}</div>
-
-					<div><img src="\{{image}}" class="post-image"></div>
-					<!-- comments button -->
-					<a class="toggle-comments" data-toggle="collapse" data-target=".comments-\{{_id}}" aria-expanded="false" aria-controls="collapseExample">
-						<span class="toggle-text">Show</span> comments (\{{comments.length}})
-					</a>
-
-					<div class="collapse comments-\{{_id}}">
-						\{{#each comments}}
-							<p>\{{text}}
-							<button type="button" class="btn btn-default btn-xs delete-comment pull-right" data-comment-id="\{{_id}}" data-placement="bottom" title="Delete"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-							</p>
-						\{{/each}}
-						<div class="row">
-							<div class="col-xs-9">
-								<form class="new-comment-form">
-									<div class="input-group">
-										<input type="text" class="form-control input-sm" name="text" placeholder="Comment goes here">
-										<span class="input-group-btn">
-											<button class="btn btn-default btn-sm add-comment-button" type="submit"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
-										</span>
-									</div>
-								</form>	
-							</div>
-						</div>		 
-					</div>
-
-					
-				</div></div>
-			\{{/each}}
-		</script>
 
 		<!-- Modal -->
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

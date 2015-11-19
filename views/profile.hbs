@@ -2,11 +2,11 @@
 
 	{{#if user}}
 	<h2>Welcome, {{user.username}}!</h2>
-		<p>Pick your spirit animal</p>
 		<hr>
-		{{#each user.posts}}
-			<p><strong>{{post}}</strong>{{description}}</p>
-		{{/each}}
+		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+	Create new Post
+	</button>
+		<div class="container" id="posts-list"></div>
 	{{/if}}
 		<!-- jquery -->
 		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -16,6 +16,6 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js">
 		</script>
 		<!-- custom script -->
-		<script type="text/javascript" src="main.js"></script>
+		<script type="text/javascript" src="profile.js"></script>
 </body>
 </html>
